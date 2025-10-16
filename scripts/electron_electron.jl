@@ -5,7 +5,7 @@ using StaticArrays
 using LinearAlgebra
 using ProgressBars
 
-function main(T::Real, n_ε::Int, n_θ::Int, outfile::String, α::Real = 6.0)
+function main(T::Real, n_ε::Int, n_θ::Int, outfile::String, bands::Vector{Function}, α::Real = 6.0)
 
     l = Lattices.Lattice([1.0, 0.0], [0.0, 1.0])
     t = @elapsed mesh = Ludwig.bz_mesh(l, bands, kb * T, n_ε, n_θ, 800, α)
@@ -19,11 +19,12 @@ function main(T::Real, n_ε::Int, n_θ::Int, outfile::String, α::Real = 6.0)
         g["n_θ"] = n_θ
         g["T"] = T
         g["corners"] = copy(transpose(reduce(hcat, mesh.corners)))
-        g["momenta"] = copy(transpose(reduce(hcat, map(x -> x.momentum, mesh.patches))))
+        g["momenta"] = copy(transpose(reduce(hcat, map(x -> x.k, mesh.patches))))
         g["velocities"] = copy(transpose(reduce(hcat, map(x -> x.v, mesh.patches))))
-        g["energies"] = map(x -> x.energy, mesh.patches) 
+        g["energies"] = map(x -> x.e, mesh.patches) 
         g["dVs"] = map(x -> x.dV, mesh.patches)
-        g["corner_ids"] = copy(transpose(reduce(hcat, map(x -> x.corners, mesh.patches))))
+        #g["corner_ids"] = copy(transpose(reduce(hcat, map(x -> x.corners, mesh.patches))))
+        g["corner_ids"] = copy(transpose(reduce(hcat, mesh.corners)))
     end 
 
     T = kb * T # Convert K to eV
@@ -34,6 +35,7 @@ function main(T::Real, n_ε::Int, n_θ::Int, outfile::String, α::Real = 6.0)
     itps = Vector{ScaledInterpolation}(undef, length(bands))
     for μ in eachindex(bands)
         for i in 1:N, j in 1:N
+            print(i)
             E[i, j] = bands[μ]([x[i], x[j]]) # Get eigenvalues (bands) of each k-point
         end
 
