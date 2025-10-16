@@ -44,9 +44,9 @@ ticklabels = ["Γ", "X", "M", "Γ"]
 
 plot(
     [
-        scatter(y=total_band_alpha, mode="lines", name="α band"),
-        scatter(y=total_band_beta,  mode="lines", name="β band"),
-        scatter(y=total_band_gamma, mode="lines", name="γ band")
+        scatter(y=total_band_alpha, mode="lines", name="α band", line=attr(color="blue")),
+        scatter(y=total_band_beta,  mode="lines", name="β band", line=attr(color="green")),
+        scatter(y=total_band_gamma, mode="lines", name="γ band", line=attr(color="red"))
     ],
     Layout(
         xaxis=attr(
@@ -58,3 +58,5 @@ plot(
         legend=attr(title="Bands"),
     )
 )
+
+bands = [band_alpha,band_beta,band_gamma]

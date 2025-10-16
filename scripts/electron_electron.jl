@@ -68,7 +68,7 @@ function argument_handling()
     return T, n_ε, n_θ, α, band_file, out_dir
 end
 
-T, n_ε, n_θ, α, band_file, dir = argument_handling()
-include(joinpath(@__DIR__, band_file))
-outfile = joinpath(@__DIR__, dir, "$(material)_$(T)_$(n_ε)x$(n_θ)_$(α).h5")
-main(T, n_ε, n_θ, outfile, α)
+#T, n_ε, n_θ, α, band_file, dir = argument_handling()
+#include(joinpath(@__DIR__, band_file))
+#outfile = joinpath(@__DIR__, dir, "$(material)_$(T)_$(n_ε)x$(n_θ)_$(α).h5")
+#main(T, n_ε, n_θ, outfile, α)
