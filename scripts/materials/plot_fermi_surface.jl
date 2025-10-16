@@ -23,6 +23,7 @@ for (i, k_x) in enumerate(k_array_x)
     end
 end
 
+# Plot contours
 ticks_x      = [-0.5,0,0.5]
 ticklabels_x = ["-π/a",0,"π/a"]
 ticks_y      = [0,0.5]
