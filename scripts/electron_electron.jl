@@ -11,6 +11,8 @@ function main(T::Real, n_ε::Int, n_θ::Int, outfile::String, bands::Vector{Func
     t = @elapsed mesh = Ludwig.bz_mesh(l, bands, kb * T, n_ε, n_θ, 800, α)
     println("Mesh generation took ", t, " seconds.")
     ℓ = length(mesh.patches)
+    print(size(mesh.patches))
+    print(ℓ)
 
     # Initialize file - will error if file exists
     h5open(outfile, "cw") do f
