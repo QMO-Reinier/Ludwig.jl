@@ -35,7 +35,6 @@ function main(T::Real, n_ε::Int, n_θ::Int, outfile::String, bands::Vector{Func
     itps = Vector{ScaledInterpolation}(undef, length(bands))
     for μ in eachindex(bands)
         for i in 1:N, j in 1:N
-            print(i)
             E[i, j] = bands[μ]([x[i], x[j]]) # Get eigenvalues (bands) of each k-point
         end
 
@@ -43,11 +42,14 @@ function main(T::Real, n_ε::Int, n_θ::Int, outfile::String, bands::Vector{Func
         itps[μ] = scale(itp, x, x)
     end
 
+    print("ha")
     L = zeros(Float64, ℓ, ℓ) # Scattering operator
     f0s = map(x -> f0(x.e, T), mesh.patches) # Fermi-Dirac Grid
     weights = orbital_weights.(map(p -> p.k, mesh.patches))
+    print("he")
 
     Threads.@threads for i in 1:ℓ
+        print(i)
         for j in 1:ℓ
             L[i,j] = Ludwig.electron_electron(mesh.patches, f0s, i, j, itps, T, vertex_pp, vertex_pk, weights)
         end
