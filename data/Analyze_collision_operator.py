@@ -30,12 +30,16 @@ data     = load_hdf5_to_numpy(filename)
 
 #%%
 
+e_charge = 1.602e-19  # electron charge in Coulomb
+
 L_ee = data["data/L"]
-v_x  = data["data/velocities"][0]
-v_y  = data["data/velocities"][0]
+v = np.vstack((data["data/velocities"][0], data["data/velocities"][1]))
 
 sigma_tensor = np.zeros((2,2))
 
 for i in range(2):
     for j in range(2):
-        sigma_tensor[i,j] = 
+        L_ee_in = np.linalg.inv(L_ee)
+        sigma_tensor[i,j] = np.matmul(v[i],np.matmul(L_ee_in,v[j]))
+        
+print(sigma_tensor)
