@@ -42,21 +42,23 @@ ticks = [0, length(band_alpha_gamma_to_X), length(band_alpha_gamma_to_X)+length(
         length(band_alpha_gamma_to_X)+length(band_alpha_X_to_M)+length(band_alpha_M_to_gamma)]
 ticklabels = ["Γ", "X", "M", "Γ"]
 
-plot(
-    [
-        scatter(y=total_band_alpha, mode="lines", name="α band", line=attr(color="blue")),
-        scatter(y=total_band_beta,  mode="lines", name="β band", line=attr(color="green")),
-        scatter(y=total_band_gamma, mode="lines", name="γ band", line=attr(color="red"))
-    ],
-    Layout(
-        xaxis=attr(
-            tickvals=ticks,
-            ticktext=ticklabels
-        ),
-        yaxis_title="E(k)",
-        font=attr(size=20),
-        legend=attr(title="Bands"),
-    )
-)
+plt =    plot(
+            [
+                scatter(y=total_band_alpha, mode="lines", name="α band", line=attr(color="blue")),
+                scatter(y=total_band_beta,  mode="lines", name="β band", line=attr(color="green")),
+                scatter(y=total_band_gamma, mode="lines", name="γ band", line=attr(color="red"))
+            ],
+            Layout(
+                xaxis=attr(
+                    tickvals=ticks,
+                    ticktext=ticklabels
+                ),
+                yaxis_title="E(k)",
+                font=attr(size=20),
+                legend=attr(title="Bands"),
+            )
+        )
+
+display(plt)
 
 bands = [band_alpha,band_beta,band_gamma]
