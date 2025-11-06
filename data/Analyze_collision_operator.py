@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import h5py
 import os
 
-os.chdir("/home/lion/Desktop/simulation_code/Code_scaffidi/data")
+os.chdir("P:\Phd\GitHub\Hydro\cuprates_transport\Ludwig.jl\data")
 
 def load_hdf5_to_numpy(filename):
     """
@@ -25,7 +25,7 @@ def load_hdf5_to_numpy(filename):
     print("\n✅ Loaded all datasets into memory.")
     return data_dict
 
-filename = 'Collision_operator_20K_Sr2RuO4_first.h5'
+filename = 'test_data_20K_4n_e_5_n_theta.h5'
 data     = load_hdf5_to_numpy(filename)
 
 #%%
@@ -40,6 +40,26 @@ sigma_tensor = np.zeros((2,2))
 for i in range(2):
     for j in range(2):
         L_ee_in = np.linalg.inv(L_ee)
-        sigma_tensor[i,j] = np.matmul(v[i],np.matmul(L_ee_in,v[j]))
+        sigma_tensor[i,j] = e_charge**2 * np.matmul(v[i],np.matmul(L_ee_in,v[j]))
         
 print(sigma_tensor)
+
+#%%
+
+def non_local_sigma(L, v_vec, q_vec, v):
+    '''
+    This function calculates the non-local conductivity as a function of 
+    momentum (q).
+    v_vec and q_vec must be same dimension
+    '''
+    non_local_sigma_tensor = np.zeros((2,2,len(v_vec)))
+    
+    for i in range(2):
+        for j in range(2):
+            operator = np.linalg.inv(L_ee+1j*np.matmul(q_vec,v_vec))
+            non_local_sigma_tensor[i,j] = e_charge**2 * np.matmul(v[i],np.matmul(L_ee_in,v[j]))
+    
+    return non_local_sigma_tensor
+
+#%%
+

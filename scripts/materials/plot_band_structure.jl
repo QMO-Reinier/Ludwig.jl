@@ -62,3 +62,4 @@ plt =    plot(
 display(plt)
 
 bands = [band_alpha,band_beta,band_gamma]
+
