@@ -3,6 +3,11 @@ from matplotlib import pyplot as plt
 import h5py
 import os
 
+h_bar = 6.50e-16 # Reduced Planck constant in eVs
+a     = 3.90e-10 # Lattice constant in m
+
+#%%
+
 os.chdir("P:\Phd\GitHub\Hydro\cuprates_transport\Ludwig.jl\data")
 
 def load_hdf5_to_numpy(filename):
@@ -22,25 +27,27 @@ def load_hdf5_to_numpy(filename):
     with h5py.File(filename, 'r') as f:
         f.visititems(visit_datasets)
 
-    print("\n✅ Loaded all datasets into memory.")
+    print("\n Loaded all datasets into memory.")
     return data_dict
 
-filename = 'test_data_12K_4n_e_5_n_theta.h5'
+filename = 'test_data_14K_5n_e_10_n_theta.h5'
 data     = load_hdf5_to_numpy(filename)
 
 #%% In this cell the conductivity is calculated from the collision operator
 
 e_charge = 1.602e-19  # electron charge in Coulomb
 
-L_ee = data["data/L"]
+L_ee = data["data/L"] # Convert to units of s^-1
 v = np.vstack((data["data/velocities"][0], data["data/velocities"][1]))
+
+v_SI = v*(1/h_bar)*a # Convert the velocities to units in m/s
 
 sigma_tensor = np.zeros((2,2))
 L_ee_in = np.linalg.inv(L_ee)
 
 for i in range(2):
     for j in range(2):
-        sigma_tensor[i,j] = 2*e_charge**2 * np.matmul(v[i],np.matmul(L_ee_in,v[j]))
+        sigma_tensor[i,j] = 2*e_charge**2 * np.matmul(v_SI[i],np.matmul(L_ee_in,v_SI[j]))
         
 print(sigma_tensor)
 
@@ -68,22 +75,27 @@ def non_local_sigma(L, v, q_vec):
     return non_local_sigma_tensor
 
 #%% Calculate the non_local conductivity
-q_x_array_1 = np.linspace(0,0.0007,100)
-q_y_array_1 = np.zeros(100)
+
+N = 100
+q_max = 1e-9
+
+q_x_array_1 = np.linspace(0,q_max,N)
+q_y_array_1 = np.zeros(N)
 q_array_1 = np.vstack((q_x_array_1,q_y_array_1))
 
-q_x_array_2 = np.linspace(0,0.0007,100)
-q_y_array_2 = np.linspace(0,0.0007,100)
+q_x_array_2 = np.linspace(0,q_max,N)
+q_y_array_2 = np.linspace(0,q_max,N)
 q_array_2 = np.vstack((q_x_array_2,q_y_array_2))
 
-sigma_xx_array_1 = np.zeros(100, dtype=complex)
-sigma_xx_array_2 = np.zeros(100, dtype=complex)
+sigma_xx_array_1 = np.zeros(N, dtype=complex)
+sigma_xx_array_2 = np.zeros(N, dtype=complex)
 
 for i in range(len(q_array_1[0])):
+    print(i)
     q_vec_1 = q_array_1[:,i]
     q_vec_2 = q_array_2[:,i]
-    sigma_xx_array_1[i] = non_local_sigma(L_ee, v, q_vec_1)[0,0]
-    sigma_xx_array_2[i] = non_local_sigma(L_ee, v, q_vec_2)[0,0]
+    sigma_xx_array_1[i] = non_local_sigma(L_ee, v_SI, q_vec_1)[0,0]
+    sigma_xx_array_2[i] = non_local_sigma(L_ee, v_SI, q_vec_2)[0,0]
     
 
 # We normalize the non-local conductivity
@@ -93,6 +105,12 @@ norm_sigma_xx_array_2 = sigma_xx_array_2/sigma_xx_array_2[0]
 
 #%%
 
-plt.plot(q_x_array_1, np.real(norm_sigma_xx_array_1))
-plt.plot(q_x_array_2, np.real(norm_sigma_xx_array_2))
+plt.figure(figsize=(6,4), dpi=300)
+plt.plot(q_x_array_1, np.real(norm_sigma_xx_array_1), color = "darkgreen", label=r"$\it{q}$ || 100")
+plt.plot(q_x_array_2, np.real(norm_sigma_xx_array_2), color = "mediumblue", label=r"$\it{q}$ || 110")
+plt.xlabel(r"$\it{q}$ (a.u.)", fontsize=15)
+plt.ylabel(r"$\sigma\it{(q)}/\sigma\it{(0)}$", fontsize=15)
+plt.xticks([])
+plt.yticks([0.2,0.6,1], fontsize=15)
+plt.legend(frameon=False, fontsize=15)
 plt.show()
