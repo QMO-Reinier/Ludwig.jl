@@ -27,7 +27,10 @@ function electrical_conductivity(L, v, E, dV, T, ω = 0.0, q = [0.0, 0.0])
 
     if q != [0.0, 0.0]
         if ω == 0.0
-            L′ = L - im * diagm(dot.(Ref(q), v))
+            #L′ = L - im * diagm(dot.(Ref(q), v))
+            #L′ = L - im * Diagonal(vec(q)*v)
+            L′ = L - im * Diagonal(v*q)
+            
         else
             L′ = L - im*ω*I + im * diagm(dot.(Ref(q), v))
         end
@@ -39,10 +42,14 @@ function electrical_conductivity(L, v, E, dV, T, ω = 0.0, q = [0.0, 0.0])
         end
     end
 
-    σ[1,1] = inner_product(first.(v), first.(v), L′, weight)
-    σ[1,2] = inner_product(first.(v), last.(v), L′, weight)
-    σ[2,1] = inner_product(last.(v), first.(v), L′, weight)
-    σ[2,2] = inner_product(last.(v), last.(v), L′, weight)
+    #σ[1,1] = inner_product(first.(v), first.(v), L′, weight)
+    #σ[1,2] = inner_product(first.(v), last.(v), L′, weight)
+    #σ[2,1] = inner_product(last.(v), first.(v), L′, weight)
+    #σ[2,2] = inner_product(last.(v), last.(v), L′, weight)
+    σ[1,1] = inner_product(v[:,1], v[:,1], L′, weight)
+    σ[1,2] = inner_product(v[:,1], v[:,2], L′, weight)
+    σ[2,1] = inner_product(v[:,2], v[:,1], L′, weight)
+    σ[2,2] = inner_product(v[:,2], v[:,2], L′, weight)
 
     return (G0 / (2π)) * (σ / T)
 end
