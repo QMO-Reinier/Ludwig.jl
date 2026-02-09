@@ -4,6 +4,7 @@ using Interpolations
 using StaticArrays
 using LinearAlgebra
 using ProgressBars
+using ProgressMeter
 
 function main(T::Real, n_ε::Int, n_θ::Int, outfile::String, bands::Vector{Function}, α::Real = 6.0)
 
@@ -44,14 +45,17 @@ function main(T::Real, n_ε::Int, n_θ::Int, outfile::String, bands::Vector{Func
         itps[μ] = scale(itp, x, x)
     end
 
-    print("ha")
+    #print("ha")
     L = zeros(Float64, ℓ, ℓ) # Scattering operator
     f0s = map(x -> f0(x.e, T), mesh.patches) # Fermi-Dirac Grid
     weights = orbital_weights.(map(p -> p.k, mesh.patches))
-    print("he")
+    #print("he")
+
+    p = Progress(ℓ)
 
     Threads.@threads for i in 1:ℓ
-        print(i)
+        #print(i)
+        next!(p)
         for j in 1:ℓ
             L[i,j] = Ludwig.electron_electron(mesh.patches, f0s, i, j, itps, T, vertex_pp, vertex_pk, weights)
         end
