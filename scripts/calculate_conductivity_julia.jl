@@ -8,7 +8,7 @@ using LinearAlgebra
 using PlotlyJS
 
 # Open the datafile
-datafile = joinpath(@__DIR__, "..", "data", "test_data_14K_5n_e_20_n_theta.h5")
+datafile = joinpath(@__DIR__, "..", "data", "test_data_14K_5n_e_10_n_theta.h5")
 data = h5open(datafile, "r")
 
 # Extract the data (all have units of eV)

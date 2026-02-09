@@ -6,8 +6,8 @@ using LinearAlgebra
 
 # Define parameters
 T             = 14  # temperature in Kelvin
-n_E           = 4   # n_E-1 is number of energy bins
-n_theta       = 10   # n_theta-1 is number of angular bins
+n_E           = 2   # n_E-1 is number of energy bins
+n_theta       = 40   # n_theta-1 is number of angular bins
 annular_width = 6   # 2*annular_width*kbT = width around Fermi surface
 material_file = "Sr2RuO4.jl"
 data_dir   = raw"\Users\regter\Documents\PhD\Theory\Simulating_boltzmann\Ludwig.jl\data"
