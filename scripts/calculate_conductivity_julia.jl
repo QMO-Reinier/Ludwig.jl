@@ -6,9 +6,10 @@ using Ludwig
 using IterativeSolvers
 using LinearAlgebra
 using PlotlyJS
+using ProgressMeter
 
 # Open the datafile
-datafile = joinpath(@__DIR__, "..", "data", "test_data_14K_5n_e_10_n_theta.h5")
+datafile = joinpath(@__DIR__, "..", "data", "test_data_14K_4n_e_74_n_theta.h5")
 data = h5open(datafile, "r")
 
 # Extract the data (all have units of eV)
@@ -32,15 +33,17 @@ sigma_q_110_xx  = zeros(ComplexF64,N)
 q_x_array   = q_x_array_SI*a/2π
 q_y_array   = q_y_array_SI*a/2π
 
-
+p = Progress(N)
 for (i,q_x) in enumerate(q_x_array)
+    next!(p)
     sigma_q_100_xx[i] = electrical_conductivity(L_ee, v, E, dV, T*kb, 0.0, [q_x, 0.0])[1,1]
+    sigma_q_110_xx[i] = electrical_conductivity(L_ee, v, E, dV, T*kb, 0.0, [q_x/sqrt(2), q_x/sqrt(2)])[1,1]
 end
 
 plt = plot(
     [
         scatter(
-            x = q_x_array_SI,
+            x = q_x_array_SI*1e-6,
             y = real(sigma_q_100_xx)/real(sigma_q_100_xx[1]),
             mode = "lines",
             name = "σ_xx",
@@ -48,7 +51,7 @@ plt = plot(
         ),
     ],
     Layout(
-        xaxis = attr(title="q"),
+        xaxis = attr(title="q (um^-1)"),
         yaxis = attr(title="σ_xx"),
         font = attr(size=20),
         #legend=attr(title="Bands"),
